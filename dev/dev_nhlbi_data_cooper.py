@@ -1093,7 +1093,7 @@ def load_peace_dataset(location, outcome='PRIMARY', intervention='TX'):
   return outcomes, features, intervention, cat_feats, num_feats
 
 
-def load_allhat_antihypertensive_dataset(location, outcome, intervention = 'RZGROUP'):
+def load_allhat_antihypertensive_dataset(location, outcome, intervention = 'RZGROUP', baseline = True):
   
   """Helper function to load and preprocess the ALLHAT dataset.
   The ALLHAT Dataset is a subset of 33,357 participants of the well known
@@ -1114,11 +1114,21 @@ def load_allhat_antihypertensive_dataset(location, outcome, intervention = 'RZGR
   [1] https://biolincc.nhlbi.nih.gov/studies/allhat/ 
   [2] https://biolincc.nhlbi.nih.gov/media/studies/allhat/data_dictionary/ALLHAT_v2016a.pdf
   """
-
-  cat_feat = ['RZGROUP', 'SEX', 'BLMEDS', 'MISTROKE', 'HXCABG', 'STDEPR', 'OASCVD', 'DIABETES',
+  if baseline:  
+    cat_feat = ['RZGROUP', 'SEX', 'BLMEDS', 'MISTROKE', 'HXCABG', 'STDEPR', 'OASCVD', 'DIABETES',
               'HDLLT35', 'LVHECG', 'WALL25',  'LCHD', 'CURSMOKE', 'ASPIRIN', 'ESTROGEN', 'ETHNIC', 'LLT']
-
-  num_feat = ['AGE', 'BLWGT', 'BLHGT', 'BLBMI', 'BV2SBP', 'BV2DBP', 'ACHOL', 'AFGLUC', 'APOTAS', 'BLGFR']
+    num_feat = ['AGE', 'BLWGT', 'BLHGT', 'BLBMI', 'BV2SBP', 'BV2DBP', 'ACHOL', 'AFGLUC', 'APOTAS', 'BLGFR']
+  else:
+    cat_feat = ['RZGROUP','VEXPY1', 'VFNDY1','VEXPY2', 'VFNDY2','VEXPY3', 'VFNDY3','VEXPY4', 'VFNDY4','VEXPY5', 'VFNDY5',
+            'ONST1Y1','SAMCLY1', 'CROSSY1', 'ONS23Y1','ONST1Y2','SAMCLY2','CROSSY2', 'ONS23Y2','ONST1Y3','SAMCLY3',
+            'CROSSY3', 'ONS23Y3','ONST1Y4','SAMCLY4','CROSSY4', 'ONS23Y4','ONST1Y5','SAMCLY5', 'CROSSY5', 'ONS23Y5',
+            'ONDIUY1','ONCCBY1','ONACEY1', 'ONOHYY1','ONDIUY2','ONCCBY2','ONACEY2', 'ONOHYY2','ONDIUY3','ONCCBY3',
+            'ONACEY3', 'ONOHYY3','ONDIUY4','ONCCBY4','ONACEY4', 'ONOHYY4','ONDIUY5','ONCCBY5','ONACEY5', 'ONOHYY5']
+    num_feat = ['NHYPRY1','NHYPRY2','NHYPRY3','NHYPRY4','NHYPRY5',
+            'SBP6M12','DBP6M12','SBP6M24','DBP6M24','SBP6M36',
+            'DBP6M36','SBP6M48','DBP6M48','SBP6M60','DBP6M60',
+            'SBP6M72','DBP6M72','GFRM24','POTASM24','CHOLM24',
+            'FGLUCM24','GFRM48','POTASM48','CHOLM48','FGLUCM48']
 
   all_feats = list(set(cat_feat + num_feat))
 
