@@ -1114,6 +1114,9 @@ def load_allhat_antihypertensive_dataset(location, outcome, intervention = 'RZGR
       [1] https://biolincc.nhlbi.nih.gov/studies/allhat/ 
       [2] https://biolincc.nhlbi.nih.gov/media/studies/allhat/data_dictionary/ALLHAT_v2016a.pdf
       """
+    cat_feat = []
+    num_feat = []
+    
     if baseline:
         cat_feat = ['RZGROUP', 'SEX', 'BLMEDS', 'MISTROKE', 'HXCABG', 'STDEPR', 'OASCVD', 'DIABETES',
               'HDLLT35', 'LVHECG', 'WALL25',  'LCHD', 'CURSMOKE', 'ASPIRIN', 'ESTROGEN', 'ETHNIC', 'LLT']
@@ -1146,7 +1149,7 @@ def load_allhat_antihypertensive_dataset(location, outcome, intervention = 'RZGR
                                                       id_col='STUDYID',
                                                       location=location+'ALLHAT/ALLHAT_v2016a/DATA/Summary/')
 
-    def follow_up_features(features):
+    def hyp_follow_up_features(features):
         features = features.rename(columns={'VEXPY1': 'Visit_Expected_At_Year1',
                                     'VFNDY1': 'Actual_Visit_At_Year1',
                                     'VEXPY2': 'Visit_Expected_At_Year2',
@@ -1333,6 +1336,9 @@ def load_allhat_antihypertensive_dataset(location, outcome, intervention = 'RZGR
     outcomes = outcomes.loc[~NaNindex]
     features = features.loc[~NaNindex]
 
+    cat_feats = []
+    num_feats = []
+    
     if baseline:
         features = features.rename(columns={"ETHNIC": "Ethnicity",
                                       "BLMEDS": "Baseline_Antihypertensive_Treatment",
@@ -1399,81 +1405,170 @@ def load_allhat_antihypertensive_dataset(location, outcome, intervention = 'RZGR
                "Baseline_Potassium",
                "Baseline_BMI"]
     else:
-        cat_feats, num_feats = follow_up_features(features)
+        cat_feats, num_feats = hyp_follow_up_features(features)
 
     return outcomes, features, intervention, cat_feats, num_feats
 
 
-def load_allhat_lipid_dataset(location, outcome, intervention = 'LRZGRP'):
+def load_allhat_lipid_dataset(location, outcome, intervention = 'LRZGRP', baseline = True):
+    
+    """Helper function to load and preprocess the ALLHAT dataset.
+    The ALLHAT Dataset is a subset of 33,357 participants of the well known
+    Antihypertensive and Lipid-Lowering Treatment to Prevent Heart Attack Trial [1] 
+    to establish the appropriate intervention between chlorothalidone (a diuretic), 
+    amlodipine (calcium channel blocker) and lisinopril (angiotensin converting enzyme 
+    (ACE) inhibitor) for hypertensive patients to reduce adverse cardiovascular
+    events. 
+    Lipid Study: Ambulatory persons (n = 10 355), aged 55 years or older, with 
+    low-density lipoprotein cholesterol (LDL-C) of 120 to 189 mg/dL (100 to 129 mg/dL if known CHD) 
+    and triglycerides lower than 350 mg/dL, were randomized to pravastatin (n = 5170) or to usual care (n = 5185). 
   
-  """Helper function to load and preprocess the ALLHAT dataset.
-  The ALLHAT Dataset is a subset of 33,357 participants of the well known
-  Antihypertensive and Lipid-Lowering Treatment to Prevent Heart Attack Trial [1] 
-  to establish the appropriate intervention between chlorothalidone (a diuretic), 
-  amlodipine (calcium channel blocker) and lisinopril (angiotensin converting enzyme 
-  (ACE) inhibitor) for hypertensive patients to reduce adverse cardiovascular
-  events. 
-  Lipid Study: Ambulatory persons (n = 10 355), aged 55 years or older, with 
-  low-density lipoprotein cholesterol (LDL-C) of 120 to 189 mg/dL (100 to 129 mg/dL if known CHD) 
-  and triglycerides lower than 350 mg/dL, were randomized to pravastatin (n = 5170) or to usual care (n = 5185). 
-  
-  References
-  ----------
-  [1] “Success and predictors of blood pressure control in diverse North American settings: 
-  the antihypertensive and lipid-lowering treatment to prevent heart attack trial (ALLHAT) 
-  - PubMed.” https://pubmed.ncbi.nlm.nih.gov/12461301/.
-  Website and Documentation
-  ----------
-  [1] https://biolincc.nhlbi.nih.gov/studies/allhat/ 
-  [2] https://biolincc.nhlbi.nih.gov/media/studies/allhat/data_dictionary/ALLHAT_v2016a.pdf
-  """
+    References
+    ----------
+    [1] “Success and predictors of blood pressure control in diverse North American settings: 
+    the antihypertensive and lipid-lowering treatment to prevent heart attack trial (ALLHAT) 
+    - PubMed.” https://pubmed.ncbi.nlm.nih.gov/12461301/.
+    Website and Documentation
+    ----------
+    [1] https://biolincc.nhlbi.nih.gov/studies/allhat/ 
+    [2] https://biolincc.nhlbi.nih.gov/media/studies/allhat/data_dictionary/ALLHAT_v2016a.pdf
+    """
 
-  cat_feat = ['LRZGRP', 'SEX', 'BLMEDS', 'DIABETES', 'LCHD', 'CURSMOKE', 'ASPIRIN', 'ESTROGEN', 'ETHNIC']
+    cat_feat = []
+    num_feat = []
+    
+    if baseline:
+        cat_feat = ['LRZGRP', 'SEX', 'BLMEDS', 'DIABETES', 'LCHD', 'CURSMOKE', 'ASPIRIN', 'ESTROGEN', 'ETHNIC']
+        
+        num_feat = ['AGE', 'BLWGT', 'BLHGT', 'BLBMI', 'BV1SBP', 'BV1DBP', 'CCHOL', 'CHDL', 'CLDL', 'CFTRIG', 'CFGLUC']
+    else:
+        cat_feat = ['VEXPY2','VFNDY2','ONPRAY2','OFFPRAY2',
+           'VEXPY4','VFNDY4','ONPRAY4','OFFPRAY4',
+           'VEXPY6','VFNDY6','ONPRAY6','OFFPRAY6']
+        
+        num_feat = ['CHOLY2','HDLY2','LDLY2','FGLUCY2','FTRIGY2',
+           'CHOLY4','HDLY4','LDLY4','FGLUCY4','FTRIGY4',
+           'CHOLY6','HDLY6','LDLY6','FGLUCY6','FTRIGY6']
+        
 
-  num_feat = ['AGE', 'BLWGT', 'BLHGT', 'BLBMI', 'BV1SBP', 'BV1DBP', 'CCHOL', 'CHDL', 'CLDL', 'CFTRIG', 'CFGLUC']
+    all_feats = list(set(cat_feat + num_feat))
 
-  all_feats = list(set(cat_feat + num_feat))
+    features = {'fp2_llt.sas7bdat': all_feats}
 
-  features = {'fp2_llt.sas7bdat': all_feats}
+    if outcome == 'STROKE': 
+        outcome_col = 'LSTROKE'
+        outcomedt = 'LDYSTROK'
+    elif outcome == 'CANCER': 
+        outcome_col = 'LCANCER'
+        outcomedt = 'LDYCANC'
+    elif outcome == 'CHD': 
+        outcome_col = 'LEP_CHD'
+        outcomedt = 'LDYCHD'
+    else: 
+        outcome_col = 'L'+outcome
+        outcomedt = 'LDY'+outcome
 
-  if outcome == 'STROKE': 
-    outcome_col = 'LSTROKE'
-    outcomedt = 'LDYSTROK'
-  elif outcome == 'CANCER': 
-    outcome_col = 'LCANCER'
-    outcomedt = 'LDYCANC'
-  elif outcome == 'CHD': 
-    outcome_col = 'LEP_CHD'
-    outcomedt = 'LDYCHD'
-  else: 
-    outcome_col = 'L'+outcome
-    outcomedt = 'LDY'+outcome
-
-  outcomes, features = _load_generic_biolincc_dataset(outcome_tbl='fp2_llt.sas7bdat', 
+    outcomes, features = _load_generic_biolincc_dataset(outcome_tbl='fp2_llt.sas7bdat', 
                                                       time_col=outcomedt, 
                                                       event_col=outcome_col,
                                                       features=features, 
                                                       id_col='STUDYID',
                                                       location=location+'ALLHAT/ALLHAT_v2016a/DATA/Summary/')
+    def llt_follow_up_features(features):
+        features = features.rename(columns={'VEXPY2': 'Visit_Expected_At_2Years',
+                                    'VFNDY2': 'Actual_Visit_At_2Years',
+                                    'ONPRAY2': 'Study_Pravastatin_At_2Years',
+                                    'OFFPRAY2': 'Non_Study_Pravastatin_At_2Years',
+                                    'VEXPY4': 'Visit_Expected_At_4Years',
+                                    'VFNDY4': 'Actual_Visit_At_4Years',
+                                    'ONPRAY4': 'Study_Pravastatin_At_4Years',
+                                    'OFFPRAY4': 'Non_Study_Pravastatin_At_4Years',
+                                    'VEXPY6': 'Visit_Expected_At_6Years',
+                                    'VFNDY6': 'Actual_Visit_At_6Years',
+                                    'ONPRAY6': 'Study_Pravastatin_At_6Years',
+                                    'OFFPRAY6': 'Non_Study_Pravastatin_At_6Years',
+                                    'CHOLY2': 'Total_Cholesterol_At_2Years',
+                                    'HDLY2': 'High_Density_Lipoprotein_Cholesterol_At_2Years',
+                                    'LDLY2': 'Low_Density_Lipoprotein_Cholesterol_At_2Years',
+                                    'FGLUCY2': 'Fasting_Glucose_At_2Years',
+                                    'FTRIGY2': 'Fasting_Triglycerides_At_2Years',
+                                    'CHOLY4': 'Total_Cholesterol_4Years',
+                                    'HDLY4': 'High_Density_Lipoprotein_Cholesterol_At_4Years',
+                                    'LDLY4': 'Low_Density_Lipoprotein_Cholesterol_At_4Years',
+                                    'FGLUCY4': 'Fasting_Glucose_At_4Years',
+                                    'FTRIGY4': 'Fasting_Triglycerides_At_4Years',
+                                    'CHOLY6': 'Total_Cholesterol_6Years',
+                                    'HDLY6': 'High_Density_Lipoprotein_Cholesterol_At_6Years',
+                                    'LDLY6': 'Low_Density_Lipoprotein_Cholesterol_At_6Years',
+                                    'FGLUCY6': 'Fasting_Glucose_At_6Years',
+                                    'FTRIGY6': 'Fasting_Triglycerides_At_6Years'})
+        
+        features['Visit_Expected_At_2Years'].replace({1.0: 'Yes', 2.0: 'No'}, inplace=True)
+        features['Visit_Expected_At_4Years'].replace({1.0: 'Yes', 2.0: 'No'}, inplace=True)
+        features['Visit_Expected_At_6Years'].replace({1.0: 'Yes', 2.0: 'No'}, inplace=True)
+        features['Actual_Visit_At_2Years'].replace({1.0: 'Yes', 2.0: 'No', 3.0: 'Not Available'}, inplace=True)
+        features['Actual_Visit_At_4Years'].replace({1.0: 'Yes', 2.0: 'No', 3.0: 'Not Available'}, inplace=True)
+        features['Actual_Visit_At_6Years'].replace({1.0: 'Yes', 2.0: 'No', 3.0: 'Not Available'}, inplace=True)
+        features['Study_Pravastatin_At_2Years'].replace({1.0: '40 mg', 2.0: '20 mg', 3.0: '10 mg', 4.0: 'Other Dose', 5.0: 'None', 6.0: 'N/A'}, inplace=True)
+        features['Study_Pravastatin_At_4Years'].replace({1.0: '40 mg', 2.0: '20 mg', 3.0: '10 mg', 4.0: 'Other Dose', 5.0: 'None', 6.0: 'N/A'}, inplace=True)
+        features['Study_Pravastatin_At_6Years'].replace({1.0: '40 mg', 2.0: '20 mg', 3.0: '10 mg', 4.0: 'Other Dose', 5.0: 'None', 6.0: 'N/A'}, inplace=True)
+        features['Non_Study_Pravastatin_At_2Years'].replace({1.0: 'On HMG CoA', 2.0: 'On Other LLD', 3.0: 'Not On LLD', 4.0: 'N/A'}, inplace=True)
+        features['Non_Study_Pravastatin_At_4Years'].replace({1.0: 'On HMG CoA', 2.0: 'On Other LLD', 3.0: 'Not On LLD', 4.0: 'N/A'}, inplace=True)
+        features['Non_Study_Pravastatin_At_6Years'].replace({1.0: 'On HMG CoA', 2.0: 'On Other LLD', 3.0: 'Not On LLD', 4.0: 'N/A'}, inplace=True)
+        
+        cat_feats = ['Visit_Expected_At_2Years',
+            'Actual_Visit_At_2Years',
+            'Study_Pravastatin_At_2Years',
+            'Non_Study_Pravastatin_At_2Years',
+            'Visit_Expected_At_4Years',
+            'Actual_Visit_At_4Years',
+            'Study_Pravastatin_At_4Years',
+            'Non_Study_Pravastatin_At_4Years',
+            'Visit_Expected_At_6Years',
+            'Actual_Visit_At_6Years',
+            'Study_Pravastatin_At_6Years',
+            'Non_Study_Pravastatin_At_6Years']
+        
+        num_feats = ['Total_Cholesterol_At_2Years',
+            'High_Density_Lipoprotein_Cholesterol_At_2Years',
+            'Low_Density_Lipoprotein_Cholesterol_At_2Years',
+            'Fasting_Glucose_At_2Years',
+            'Fasting_Triglycerides_At_2Years',
+            'Total_Cholesterol_At_4Years',
+            'High_Density_Lipoprotein_Cholesterol_At_4Years',
+            'Low_Density_Lipoprotein_Cholesterol_At_4Years',
+            'Fasting_Glucose_At_4Years',
+            'Fasting_Triglycerides_At_4Years',
+            'Total_Cholesterol_At_6Years',
+            'High_Density_Lipoprotein_Cholesterol_At_6Years',
+            'Low_Density_Lipoprotein_Cholesterol_At_6Years',
+            'Fasting_Glucose_At_6Years',
+            'Fasting_Triglycerides_At_6Years']
+        
+        return cat_feats, num_feats
   
-  cat_feat = [cat_feat for cat_feat in cat_feat if cat_feat is not intervention]
-  all_feats = list(set(cat_feat + num_feat))
+    cat_feat = [cat_feat for cat_feat in cat_feat if cat_feat is not intervention]
+    all_feats = list(set(cat_feat + num_feat))
 
-  intervention = features[intervention]
-  features = features[all_feats]
+    intervention = features[intervention]
+    features = features[all_feats]
 
-  intervention[intervention == 1.0] = 'Pravastatin'
-  intervention[intervention == 2.0] = 'Usual Care'
+    intervention[intervention == 1.0] = 'Pravastatin'
+    intervention[intervention == 2.0] = 'Usual Care'
 
-  # Convert Censoring Indicator to Binary
-  # ie. 1 = Event, 0 = Censored
-  outcomes.event = outcomes.event == 1.0 
+    # Convert Censoring Indicator to Binary
+    # ie. 1 = Event, 0 = Censored
+    outcomes.event = outcomes.event == 1.0 
 
-  NaNindex = pd.isna(outcomes.time)
-  outcomes = outcomes.loc[~NaNindex]
-  features = features.loc[~NaNindex]
+    NaNindex = pd.isna(outcomes.time)
+    outcomes = outcomes.loc[~NaNindex]
+    features = features.loc[~NaNindex]
 
-  features = features.rename(columns={"ETHNIC": "Ethnicity",
+    cat_feats = []
+    num_feats = []
+    
+    if baseline:
+        features = features.rename(columns={"ETHNIC": "Ethnicity",
                                       "BLMEDS": "Baseline_Antihypertensive_Treatment",
                                       "BV1SBP": "Baseline_Seated_Systolic_Blood_Pressure",
                                       "BV1DBP": "Baseline_Seated_Diastolic_Blood_Pressure",
@@ -1492,17 +1587,17 @@ def load_allhat_lipid_dataset(location, outcome, intervention = 'LRZGRP'):
                                       'CLDL': 'Baseline_LDL_Cholesterol',
                                       'CFTRIG': 'Baseline_Triglycerides',
                                       "BLBMI": "Baseline_BMI"})
-
-  features['Baseline_Smoke_status'].replace({1.0: "Current", 2.0: "Past", 3.0: "Never"}, inplace=True)
-  features['Baseline_Antihypertensive_Treatment'].replace({1.0: "On 1-2 drugs > 2 months", 2.0: "On drugs < 2 months", 3.0: "Currently untreated"}, inplace=True)
-  features['Sex'].replace({1.0: "Male", 2.0: "Female"}, inplace=True)
-  features['Baseline_History_Aspirin'].replace({1.0: "Yes", 2.0: "No", 3.0: "Don't know"}, inplace=True)
-  features['Baseline_Estrogen_Supplementation'].replace({1.0: "Yes", 2.0: "No", 3.0: "Don't know"}, inplace=True)
-  features['Ethnicity'].replace({1.0: "White Non-Hispanic", 2.0: "Black Non-Hispanic", 3.0: "White Hispanic", 4.0: "Black Hispanic", 5.0: "Other"}, inplace=True)
-  features['Baseline_History_Diabetes'].replace({1.0: "Yes", 2.0: "No"}, inplace=True)
-  features['Baseline_History_Congenital_Heart_Defects'].replace({1.0: "Yes", 2.0: "No"}, inplace=True)
+        
+        features['Baseline_Smoke_status'].replace({1.0: "Current", 2.0: "Past", 3.0: "Never"}, inplace=True)
+        features['Baseline_Antihypertensive_Treatment'].replace({1.0: "On 1-2 drugs > 2 months", 2.0: "On drugs < 2 months", 3.0: "Currently untreated"}, inplace=True)
+        features['Sex'].replace({1.0: "Male", 2.0: "Female"}, inplace=True)
+        features['Baseline_History_Aspirin'].replace({1.0: "Yes", 2.0: "No", 3.0: "Don't know"}, inplace=True)
+        features['Baseline_Estrogen_Supplementation'].replace({1.0: "Yes", 2.0: "No", 3.0: "Don't know"}, inplace=True)
+        features['Ethnicity'].replace({1.0: "White Non-Hispanic", 2.0: "Black Non-Hispanic", 3.0: "White Hispanic", 4.0: "Black Hispanic", 5.0: "Other"}, inplace=True)
+        features['Baseline_History_Diabetes'].replace({1.0: "Yes", 2.0: "No"}, inplace=True)
+        features['Baseline_History_Congenital_Heart_Defects'].replace({1.0: "Yes", 2.0: "No"}, inplace=True)
   
-  cat_feats = ["Baseline_Antihypertensive_Treatment", 
+        cat_feats = ["Baseline_Antihypertensive_Treatment", 
                "Baseline_Smoke_status", 
                "Sex",
                "Baseline_History_Diabetes",
@@ -1511,7 +1606,7 @@ def load_allhat_lipid_dataset(location, outcome, intervention = 'LRZGRP'):
                "Ethnicity",
                "Baseline_History_Congenital_Heart_Defects"]
 
-  num_feats = ["Baseline_Seated_Systolic_Blood_Pressure",
+        num_feats = ["Baseline_Seated_Systolic_Blood_Pressure",
                "Baseline_Seated_Diastolic_Blood_Pressure", 
                "Baseline_Age",
                "Baseline_Total_Cholesterol",
@@ -1521,6 +1616,8 @@ def load_allhat_lipid_dataset(location, outcome, intervention = 'LRZGRP'):
                "Baseline_HDL_Cholesterol",
                "Baseline_LDL_Cholesterol",
                "Baseline_Triglycerides",
-               "Baseline_BMI"]  
+               "Baseline_BMI"] 
+    else:
+        cat_feats, num_feats = llt_follow_up_features(features)
 
-  return outcomes, features, intervention, cat_feats, num_feats
+    return outcomes, features, intervention, cat_feats, num_feats
