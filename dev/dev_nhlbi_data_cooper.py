@@ -1095,76 +1095,246 @@ def load_peace_dataset(location, outcome='PRIMARY', intervention='TX'):
 
 def load_allhat_antihypertensive_dataset(location, outcome, intervention = 'RZGROUP', baseline = True):
   
-  """Helper function to load and preprocess the ALLHAT dataset.
-  The ALLHAT Dataset is a subset of 33,357 participants of the well known
-  Antihypertensive and Lipid-Lowering Treatment to Prevent Heart Attack Trial [1] 
-  to establish the appropriate intervention between chlorothalidone (a diuretic), 
-  amlodipine (calcium channel blocker) and lisinopril (angiotensin converting enzyme 
-  (ACE) inhibitor) for hypertensive patients to reduce adverse cardiovascular
-  events. 
-  Hypertension Study: A total of 33 357 participants aged 55 years or older with hypertension 
-  and at least 1 other CHD risk factor from 623 North American centers.
-  References
-  ----------
-  [1] “Success and predictors of blood pressure control in diverse North American settings: 
-  the antihypertensive and lipid-lowering treatment to prevent heart attack trial (ALLHAT) 
-  - PubMed.” https://pubmed.ncbi.nlm.nih.gov/12461301/.
-  Website and Documentation
-  ----------
-  [1] https://biolincc.nhlbi.nih.gov/studies/allhat/ 
-  [2] https://biolincc.nhlbi.nih.gov/media/studies/allhat/data_dictionary/ALLHAT_v2016a.pdf
-  """
-  if baseline:  
-    cat_feat = ['RZGROUP', 'SEX', 'BLMEDS', 'MISTROKE', 'HXCABG', 'STDEPR', 'OASCVD', 'DIABETES',
+    """Helper function to load and preprocess the ALLHAT dataset.
+      The ALLHAT Dataset is a subset of 33,357 participants of the well known
+      Antihypertensive and Lipid-Lowering Treatment to Prevent Heart Attack Trial [1] 
+      to establish the appropriate intervention between chlorothalidone (a diuretic), 
+      amlodipine (calcium channel blocker) and lisinopril (angiotensin converting enzyme 
+      (ACE) inhibitor) for hypertensive patients to reduce adverse cardiovascular
+      events. 
+      Hypertension Study: A total of 33 357 participants aged 55 years or older with hypertension 
+      and at least 1 other CHD risk factor from 623 North American centers.
+      References
+      ----------
+      [1] “Success and predictors of blood pressure control in diverse North American settings: 
+      the antihypertensive and lipid-lowering treatment to prevent heart attack trial (ALLHAT) 
+      - PubMed.” https://pubmed.ncbi.nlm.nih.gov/12461301/.
+      Website and Documentation
+      ----------
+      [1] https://biolincc.nhlbi.nih.gov/studies/allhat/ 
+      [2] https://biolincc.nhlbi.nih.gov/media/studies/allhat/data_dictionary/ALLHAT_v2016a.pdf
+      """
+    if baseline:
+        cat_feat = ['RZGROUP', 'SEX', 'BLMEDS', 'MISTROKE', 'HXCABG', 'STDEPR', 'OASCVD', 'DIABETES',
               'HDLLT35', 'LVHECG', 'WALL25',  'LCHD', 'CURSMOKE', 'ASPIRIN', 'ESTROGEN', 'ETHNIC', 'LLT']
-    num_feat = ['AGE', 'BLWGT', 'BLHGT', 'BLBMI', 'BV2SBP', 'BV2DBP', 'ACHOL', 'AFGLUC', 'APOTAS', 'BLGFR']
-  else:
-    cat_feat = ['RZGROUP','VEXPY1', 'VFNDY1','VEXPY2', 'VFNDY2','VEXPY3', 'VFNDY3','VEXPY4', 'VFNDY4','VEXPY5', 'VFNDY5',
-            'ONST1Y1','SAMCLY1', 'CROSSY1', 'ONS23Y1','ONST1Y2','SAMCLY2','CROSSY2', 'ONS23Y2','ONST1Y3','SAMCLY3',
-            'CROSSY3', 'ONS23Y3','ONST1Y4','SAMCLY4','CROSSY4', 'ONS23Y4','ONST1Y5','SAMCLY5', 'CROSSY5', 'ONS23Y5',
-            'ONDIUY1','ONCCBY1','ONACEY1', 'ONOHYY1','ONDIUY2','ONCCBY2','ONACEY2', 'ONOHYY2','ONDIUY3','ONCCBY3',
-            'ONACEY3', 'ONOHYY3','ONDIUY4','ONCCBY4','ONACEY4', 'ONOHYY4','ONDIUY5','ONCCBY5','ONACEY5', 'ONOHYY5']
-    num_feat = ['NHYPRY1','NHYPRY2','NHYPRY3','NHYPRY4','NHYPRY5',
+        num_feat = ['AGE', 'BLWGT', 'BLHGT', 'BLBMI', 'BV2SBP', 'BV2DBP', 'ACHOL', 'AFGLUC', 'APOTAS', 'BLGFR']
+    else:
+        cat_feat = ['RZGROUP','VEXPY1', 'VFNDY1','VEXPY2','VFNDY2','VEXPY3','VFNDY3','VEXPY4','VFNDY4','VEXPY5','VFNDY5','ONST1Y1',
+            'SAMCLY1','CROSSY1','ONS23Y1','ONST1Y2','SAMCLY2','CROSSY2','ONS23Y2','ONST1Y3','SAMCLY3','CROSSY3','ONS23Y3','ONST1Y4',
+            'SAMCLY4','CROSSY4','ONS23Y4','ONST1Y5','SAMCLY5','CROSSY5','ONS23Y5','ONDIUY1','ONCCBY1','ONACEY1','ONOHYY1','ONDIUY2',
+            'ONCCBY2','ONACEY2','ONOHYY2','ONDIUY3','ONCCBY3','ONACEY3','ONOHYY3','ONDIUY4','ONCCBY4','ONACEY4','ONOHYY4','ONDIUY5',
+            'ONCCBY5','ONACEY5','ONOHYY5']
+        num_feat = ['NHYPRY1','NHYPRY2','NHYPRY3','NHYPRY4','NHYPRY5',
             'SBP6M12','DBP6M12','SBP6M24','DBP6M24','SBP6M36',
             'DBP6M36','SBP6M48','DBP6M48','SBP6M60','DBP6M60',
             'SBP6M72','DBP6M72','GFRM24','POTASM24','CHOLM24',
             'FGLUCM24','GFRM48','POTASM48','CHOLM48','FGLUCM48']
+        
+    all_feats = list(set(cat_feat + num_feat))
 
-  all_feats = list(set(cat_feat + num_feat))
+    features = {'fp1_hyp.sas7bdat': all_feats}
 
-  features = {'fp1_hyp.sas7bdat': all_feats}
+    if outcome == 'EP_CHD': outcomedt = 'DYCHD'
+    elif outcome == 'CANCER': outcomedt = 'DYCANC'
+    elif outcome == 'GIBLEED': outcomedt = 'DYGIBLD'
+    else: outcomedt = 'DY'+outcome
 
-  if outcome == 'EP_CHD': outcomedt = 'DYCHD'
-  elif outcome == 'CANCER': outcomedt = 'DYCANC'
-  elif outcome == 'GIBLEED': outcomedt = 'DYGIBLD'
-  else: outcomedt = 'DY'+outcome
-
-  outcomes, features = _load_generic_biolincc_dataset(outcome_tbl='fp1_hyp.sas7bdat', 
+    outcomes, features = _load_generic_biolincc_dataset(outcome_tbl='fp1_hyp.sas7bdat', 
                                                       time_col=outcomedt, 
                                                       event_col=outcome,
                                                       features=features, 
                                                       id_col='STUDYID',
                                                       location=location+'ALLHAT/ALLHAT_v2016a/DATA/Summary/')
+
+    def follow_up_features(features):
+        features = features.rename(columns={'VEXPY1': 'Visit_Expected_At_Year1',
+                                    'VFNDY1': 'Actual_Visit_At_Year1',
+                                    'VEXPY2': 'Visit_Expected_At_Year2',
+                                    'VFNDY2': 'Actual_Visit_At_Year2',
+                                    'VEXPY3': 'Visit_Expected_At_Year3',
+                                    'VFNDY3': 'Actual_Visit_At_Year3',
+                                    'VEXPY4': 'Visit_Expected_At_Year4',
+                                    'VFNDY4': 'Actual_Visit_At_Year4',
+                                    'VEXPY5': 'Visit_Expected_At_Year5',
+                                    'VFNDY5': 'Actual_Visit_At_Year5',
+                                    'ONST1Y1': 'Receiving_Blinded_Study_Drug_Year1',
+                                    'SAMCLY1': 'Receiving_Same_Class_Year1',
+                                    'CROSSY1': 'Treatment_Crossover_Year1',
+                                    'ONS23Y1': 'Receiving_Step2_OR_Step3_Year1',
+                                    'ONST1Y2': 'Receiving_Blinded_Study_Drug_Year2',
+                                    'SAMCLY2': 'Receiving_Same_Class_Year2',
+                                    'CROSSY2': 'Treatment_Crossover_Year2',
+                                    'ONS23Y2': 'Receiving_Step2_OR_Step3_Year2',
+                                    'ONST1Y3': 'Receiving_Blinded_Study_Drug_Year3',
+                                    'SAMCLY3': 'Receiving_Same_Class_Year3',
+                                    'CROSSY3': 'Treatment_Crossover_Year3',
+                                    'ONS23Y3':'Receiving_Step2_OR_Step3_Year3' ,
+                                    'ONST1Y4': 'Receiving_Blinded_Study_Drug_Year4',
+                                    'SAMCLY4': 'Receiving_Same_Class_Year4',
+                                    'CROSSY4': 'Treatment_Crossover_Year4',
+                                    'ONS23Y4': 'Receiving_Step2_OR_Step3_Year4',
+                                    'ONST1Y5': 'Receiving_Blinded_Study_Drug_Year5',
+                                    'SAMCLY5': 'Receiving_Same_Class_Year5',
+                                    'CROSSY5': 'Treatment_Crossover_Year5',
+                                    'ONS23Y5': 'Receiving_Step2_OR_Step3_Year5',
+                                    'ONDIUY1': 'On_OL_Diuretic_Year1',
+                                    'ONCCBY1': 'On_OL_CCB_Year1',
+                                    'ONACEY1': 'On_OL_ACE_Year1',
+                                    'ONOHYY1': 'On_Other_Antihypertensive_Medications_Year1',
+                                    'ONDIUY2': 'On_OL_Diuretic_Year2',
+                                    'ONCCBY2': 'On_OL_CCB_Year2',
+                                    'ONACEY2': 'On_OL_ACE_Year2',
+                                    'ONOHYY2': 'On_Other_Antihypertensive_Medications_Year2',
+                                    'ONDIUY3': 'On_OL_Diuretic_Year3',
+                                    'ONCCBY3': 'On_OL_CCB_Year3',
+                                    'ONACEY3': 'On_OL_ACE_Year3',
+                                    'ONOHYY3': 'On_Other_Antihypertensive_Medications_Year3',
+                                    'ONDIUY4': 'On_OL_Diuretic_Year4',
+                                    'ONCCBY4': 'On_OL_CCB_Year4',
+                                    'ONACEY4': 'On_OL_ACE_Year4',
+                                    'ONOHYY4': 'On_Other_Antihypertensive_Medications_Year4',
+                                    'ONDIUY5': 'On_OL_Diuretic_Year5',
+                                    'ONCCBY5': 'On_OL_CCB_Year5',
+                                    'ONACEY5': 'On_OL_ACE_Year5',
+                                    'ONOHYY5': 'On_Other_Antihypertensive_Medications_Year5',
+                                    'NHYPRY1': 'Number_Of_Antihypertensive_Medications_Year1',
+                                    'NHYPRY2': 'Number_Of_Antihypertensive_Medications_Year2',
+                                    'NHYPRY3': 'Number_Of_Antihypertensive_Medications_Year3',
+                                    'NHYPRY4': 'Number_Of_Antihypertensive_Medications_Year4',
+                                    'NHYPRY5': 'Number_Of_Antihypertensive_Medications_Year5',
+                                    'SBP6M12': 'Systolic_Blood_Pressure_Year1',
+                                    'DBP6M12': 'Diastolic_Blood_Pressure_Year1',
+                                    'SBP6M24': 'Systolic_Blood_Pressure_Year2',
+                                    'DBP6M24': 'Diastolic_Blood_Pressure_Year2',
+                                    'SBP6M36': 'Systolic_Blood_Pressure_Year3',
+                                    'DBP6M36': 'Diastolic_Blood_Pressure_Year3',
+                                    'SBP6M48': 'Systolic_Blood_Pressure_Year4',
+                                    'DBP6M48': 'Diastolic_Blood_Pressure_Year4',
+                                    'SBP6M60': 'Systolic_Blood_Pressure_Year5',
+                                    'DBP6M60': 'Diastolic_Blood_Pressure_Year5',
+                                    'SBP6M72': 'Systolic_Blood_Pressure_Year6',
+                                    'DBP6M72': 'Diastolic_Blood_Pressure_Year6',
+                                    'GFRM24': 'Estimated_Glomerular_Filtration_Rate_2Years',
+                                    'POTASM24': 'Serum_Potassium_2Years',
+                                    'CHOLM24': 'Total_Serum_Cholesterol_2Years',
+                                    'FGLUCM24': 'Fasting_Serum_Glucose_2Years',
+                                    'GFRM48': 'Estimated_Glomerular_Filtration_Rate_4Years',
+                                    'POTASM48': 'Serum_Potassium_4Years',
+                                    'CHOLM48': 'Total_Serum_Cholesterol_4Years',
+                                    'FGLUCM48': 'Fasting_Serum_Glucose_4Years'})
+        features['Actual_Visit_At_Year1'].replace({1.0: 'Yes', 2.0: 'No', 3.0: 'Not Available'}, inplace=True)
+        features['Actual_Visit_At_Year2'].replace({1.0: 'Yes', 2.0: 'No', 3.0: 'Not Available'}, inplace=True)
+        features['Actual_Visit_At_Year3'].replace({1.0: 'Yes', 2.0: 'No', 3.0: 'Not Available'}, inplace=True)
+        features['Actual_Visit_At_Year4'].replace({1.0: 'Yes', 2.0: 'No', 3.0: 'Not Available'}, inplace=True)
+        features['Actual_Visit_At_Year5'].replace({1.0: 'Yes', 2.0: 'No', 3.0: 'Not Available'}, inplace=True)
+        features['Treatment_Crossover_Year1'].replace({1.0: 'Full', 2.0: 'Partial', 3.0: 'No'}, inplace=True)
+        features['Treatment_Crossover_Year2'].replace({1.0: 'Full', 2.0: 'Partial', 3.0: 'No'}, inplace=True)
+        features['Treatment_Crossover_Year3'].replace({1.0: 'Full', 2.0: 'Partial', 3.0: 'No'}, inplace=True)
+        features['Treatment_Crossover_Year4'].replace({1.0: 'Full', 2.0: 'Partial', 3.0: 'No'}, inplace=True)
+        features['Treatment_Crossover_Year5'].replace({1.0: 'Full', 2.0: 'Partial', 3.0: 'No'}, inplace=True)
+        
+        cols = ['Visit_Expected_At_Year1',
+       'Visit_Expected_At_Year2',
+       'Visit_Expected_At_Year3',
+       'Visit_Expected_At_Year4',
+       'Visit_Expected_At_Year5',
+       'Receiving_Blinded_Study_Drug_Year1',
+       'Receiving_Same_Class_Year1',
+       'Receiving_Blinded_Study_Drug_Year2',
+       'Receiving_Same_Class_Year2',
+       'Receiving_Blinded_Study_Drug_Year3',
+       'Receiving_Same_Class_Year3',
+       'Receiving_Blinded_Study_Drug_Year4',
+       'Receiving_Same_Class_Year4',
+       'Receiving_Blinded_Study_Drug_Year5',
+       'Receiving_Same_Class_Year5',
+       'Receiving_Step2_OR_Step3_Year1',
+       'Receiving_Step2_OR_Step3_Year2',
+       'Receiving_Step2_OR_Step3_Year3',
+       'Receiving_Step2_OR_Step3_Year4',
+       'Receiving_Step2_OR_Step3_Year5',
+       'On_OL_Diuretic_Year1',
+       'On_OL_CCB_Year1',
+       'On_OL_ACE_Year1',
+       'On_Other_Antihypertensive_Medications_Year1',
+       'On_OL_Diuretic_Year2',
+       'On_OL_CCB_Year2',
+       'On_OL_ACE_Year2',
+       'On_Other_Antihypertensive_Medications_Year2',
+       'On_OL_Diuretic_Year3',
+       'On_OL_CCB_Year3',
+       'On_OL_ACE_Year3',
+       'On_Other_Antihypertensive_Medications_Year3',
+       'On_OL_Diuretic_Year4',
+       'On_OL_CCB_Year4',
+       'On_OL_ACE_Year4',
+       'On_Other_Antihypertensive_Medications_Year4',
+       'On_OL_Diuretic_Year5',
+       'On_OL_CCB_Year5',
+       'On_OL_ACE_Year5',
+       'On_Other_Antihypertensive_Medications_Year5']
+        
+        for col in cols:
+            features[col].replace({1.0: "Yes", 2.0: "No"}, inplace=True)
+        
+        cat_feats = cols + ['Actual_Visit_At_Year1',
+                   'Actual_Visit_At_Year2',
+                   'Actual_Visit_At_Year3',
+                   'Actual_Visit_At_Year4',
+                   'Actual_Visit_At_Year5',
+                   'Treatment_Crossover_Year1',
+                   'Treatment_Crossover_Year2',
+                   'Treatment_Crossover_Year3',
+                   'Treatment_Crossover_Year4',
+                   'Treatment_Crossover_Year5']
+        
+        num_feats = ['Number_Of_Antihypertensive_Medications_Year1',
+            'Number_Of_Antihypertensive_Medications_Year2',
+            'Number_Of_Antihypertensive_Medications_Year3',
+            'Number_Of_Antihypertensive_Medications_Year4',
+            'Number_Of_Antihypertensive_Medications_Year5',
+            'Systolic_Blood_Pressure_Year1',
+            'Diastolic_Blood_Pressure_Year1',
+            'Systolic_Blood_Pressure_Year2',
+            'Diastolic_Blood_Pressure_Year2',
+            'Systolic_Blood_Pressure_Year3',
+            'Diastolic_Blood_Pressure_Year3',
+            'Systolic_Blood_Pressure_Year4',
+            'Diastolic_Blood_Pressure_Year4',
+            'Systolic_Blood_Pressure_Year5',
+            'Diastolic_Blood_Pressure_Year5',
+            'Estimated_Glomerular_Filtration_Rate_2Years',
+            'Serum_Potassium_2Years',
+            'Total_Serum_Cholesterol_2Years',
+            'Fasting_Serum_Glucose_2Years',
+            'Estimated_Glomerular_Filtration_Rate_4Years',
+            'Serum_Potassium_4Years',
+            'Total_Serum_Cholesterol_4Years',
+            'Fasting_Serum_Glucose_4Years']
+        
+        return cat_feats, num_feats
+
   
-  cat_feat = [cat_feat for cat_feat in cat_feat if cat_feat is not intervention]
-  all_feats = list(set(cat_feat + num_feat))
+    cat_feat = [cat_feat for cat_feat in cat_feat if cat_feat is not intervention]
+    all_feats = list(set(cat_feat + num_feat))
 
-  intervention = features[intervention]
-  features = features[all_feats]
+    intervention = features[intervention]
+    features = features[all_feats]
 
-  intervention[intervention == 2.0] = 'Chlorthalidone'
-  intervention[intervention == 3.0] = 'Amlodipine'
-  intervention[intervention == 4.0] = 'Lisinopril'
+    intervention[intervention == 2.0] = 'Chlorthalidone'
+    intervention[intervention == 3.0] = 'Amlodipine'
+    intervention[intervention == 4.0] = 'Lisinopril'
 
-  # Convert Censoring Indicator to Binary
-  # ie. 1 = Event, 0 = Censored
-  outcomes.event = outcomes.event == 1.0 
+    # Convert Censoring Indicator to Binary
+    # ie. 1 = Event, 0 = Censored
+    outcomes.event = outcomes.event == 1.0 
 
-  NaNindex = pd.isna(outcomes.time)
-  outcomes = outcomes.loc[~NaNindex]
-  features = features.loc[~NaNindex]
+    NaNindex = pd.isna(outcomes.time)
+    outcomes = outcomes.loc[~NaNindex]
+    features = features.loc[~NaNindex]
 
-  features = features.rename(columns={"ETHNIC": "Ethnicity",
+    if baseline:
+        features = features.rename(columns={"ETHNIC": "Ethnicity",
                                       "BLMEDS": "Baseline_Antihypertensive_Treatment",
                                       "BV2SBP": "Baseline_Seated_Systolic_Blood_Pressure",
                                       "BV2DBP": "Baseline_Seated_Diastolic_Blood_Pressure",
@@ -1190,15 +1360,14 @@ def load_allhat_antihypertensive_dataset(location, outcome, intervention = 'RZGR
                                       'MISTROKE': 'Baseline_History_Myocardial_Infarction_or_Stroke',
                                       'LLT': 'Baseline_Lipid_Lowering_Therapy',
                                       "BLBMI": "Baseline_BMI"})
-
-  features['Baseline_Smoke_status'].replace({1.0: "Current", 2.0: "Past", 3.0: "Never"}, inplace=True)
-  features['Baseline_Antihypertensive_Treatment'].replace({1.0: "On 1-2 drugs > 2 months", 2.0: "On drugs < 2 months", 3.0: "Currently untreated"}, inplace=True)
-  features['Sex'].replace({1.0: "Male", 2.0: "Female"}, inplace=True)
-  features['Baseline_History_Aspirin'].replace({1.0: "Yes", 2.0: "No", 3.0: "Don't know"}, inplace=True)
-  features['Baseline_Estrogen_Supplementation'].replace({1.0: "Yes", 2.0: "No", 3.0: "Don't know"}, inplace=True)
-  features['Ethnicity'].replace({1.0: "White Non-Hispanic", 2.0: "Black Non-Hispanic", 3.0: "White Hispanic", 4.0: "Black Hispanic", 5.0: "Other"}, inplace=True)
-
-  cols = ["Baseline_History_Myocardial_Infarction_or_Stroke",
+        features['Baseline_Smoke_status'].replace({1.0: "Current", 2.0: "Past", 3.0: "Never"}, inplace=True)
+        features['Baseline_Antihypertensive_Treatment'].replace({1.0: "On 1-2 drugs > 2 months", 2.0: "On drugs < 2 months", 3.0: "Currently untreated"}, inplace=True)
+        features['Sex'].replace({1.0: "Male", 2.0: "Female"}, inplace=True)
+        features['Baseline_History_Aspirin'].replace({1.0: "Yes", 2.0: "No", 3.0: "Don't know"}, inplace=True)
+        features['Baseline_Estrogen_Supplementation'].replace({1.0: "Yes", 2.0: "No", 3.0: "Don't know"}, inplace=True)
+        features['Ethnicity'].replace({1.0: "White Non-Hispanic", 2.0: "Black Non-Hispanic", 3.0: "White Hispanic", 4.0: "Black Hispanic", 5.0: "Other"}, inplace=True)
+        
+        cols = ["Baseline_History_Myocardial_Infarction_or_Stroke",
           "Baseline_History_Coronary_Artery_Bypass_Graft",
           "Baseline_History_ST_depression_or_T-wave_inversion",
           "Baseline_Other_Atherosclerotic_Cardiovascular_Disease",
@@ -1208,18 +1377,18 @@ def load_allhat_antihypertensive_dataset(location, outcome, intervention = 'RZGR
           "Baseline_History_Left_Ventricular_Hypertrophy_Electrocardiogram",
           "Baseline_History_Congenital_Heart_Defects",
           "Baseline_Lipid_Lowering_Therapy"]
-
-  for col in cols:
-    features[col].replace({1.0: "Yes", 2.0: "No"}, inplace=True)
-  
-  cat_feats = cols + ["Baseline_Antihypertensive_Treatment", 
+        
+        for col in cols:
+            features[col].replace({1.0: "Yes", 2.0: "No"}, inplace=True)
+            
+        cat_feats = cols + ["Baseline_Antihypertensive_Treatment", 
                       "Baseline_Smoke_status", 
                       "Sex",
                       "Baseline_History_Aspirin",
                       "Baseline_Estrogen_Supplementation",
                       "Ethnicity"]
-
-  num_feats = ["Baseline_Seated_Systolic_Blood_Pressure",
+        
+        num_feats = ["Baseline_Seated_Systolic_Blood_Pressure",
                "Baseline_Seated_Diastolic_Blood_Pressure", 
                "Baseline_Estimated_Glomerular_Filtration_Rate",
                "Baseline_Age",
@@ -1228,9 +1397,11 @@ def load_allhat_antihypertensive_dataset(location, outcome, intervention = 'RZGR
                "Baseline_Weight_LBS", 
                "Baseline_Height_INC",
                "Baseline_Potassium",
-               "Baseline_BMI"]  
+               "Baseline_BMI"]
+    else:
+        cat_feats, num_feats = follow_up_features(features)
 
-  return outcomes, features, intervention, cat_feats, num_feats
+    return outcomes, features, intervention, cat_feats, num_feats
 
 
 def load_allhat_lipid_dataset(location, outcome, intervention = 'LRZGRP'):
